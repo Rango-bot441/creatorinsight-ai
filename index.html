@@ -1,0 +1,1117 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CreatorInsight AI｜抖音创作者复盘增长助手</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f8fc;
+      --card: #ffffff;
+      --soft: #f8fafd;
+      --ink: #172033;
+      --muted: #667085;
+      --line: #dce3ee;
+      --line-strong: #c6d0df;
+      --blue: #2f6bff;
+      --teal: #12b9a6;
+      --orange: #f59e0b;
+      --red: #ef4444;
+      --green: #16a34a;
+      --shadow: 0 16px 42px rgba(23, 32, 51, 0.08);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Avenir Next", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background:
+        linear-gradient(90deg, rgba(47, 107, 255, .045) 1px, transparent 1px),
+        linear-gradient(rgba(18, 185, 166, .045) 1px, transparent 1px),
+        radial-gradient(circle at 0% 0%, rgba(239, 68, 68, .10), transparent 24rem),
+        radial-gradient(circle at 100% 0%, rgba(47, 107, 255, .13), transparent 28rem),
+        var(--bg);
+      background-size: 32px 32px, 32px 32px, auto, auto, auto;
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+
+    .shell {
+      width: min(1420px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 22px 0 42px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .logo {
+      display: grid;
+      width: 44px;
+      height: 44px;
+      place-items: center;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: 900;
+      background: linear-gradient(135deg, #111827, var(--blue) 55%, var(--teal));
+      box-shadow: 0 12px 28px rgba(47, 107, 255, .24);
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      margin-bottom: 3px;
+      font-size: clamp(24px, 3vw, 36px);
+      letter-spacing: 0;
+    }
+
+    .brand p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 14px;
+      color: var(--ink);
+      background: var(--card);
+      box-shadow: 0 8px 18px rgba(23, 32, 51, .06);
+      transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      border-color: var(--line-strong);
+      box-shadow: 0 12px 26px rgba(23, 32, 51, .10);
+    }
+
+    .btn:disabled {
+      cursor: wait;
+      opacity: .62;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn.primary {
+      border-color: #111827;
+      color: #fff;
+      background: #111827;
+    }
+
+    .btn.small {
+      min-height: 32px;
+      padding: 0 10px;
+      font-size: 13px;
+      box-shadow: none;
+    }
+
+    .btn.danger {
+      border-color: rgba(239, 68, 68, .24);
+      color: #b4232a;
+      background: #fff4f4;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 420px;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .94);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .intro {
+      position: relative;
+      min-height: 194px;
+      padding: 22px;
+      overflow: hidden;
+    }
+
+    .intro::after {
+      position: absolute;
+      right: -80px;
+      top: -80px;
+      width: 220px;
+      height: 220px;
+      content: "";
+      border: 34px solid rgba(18, 185, 166, .12);
+      border-radius: 50%;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 28px;
+      border-radius: 999px;
+      padding: 0 10px;
+      color: var(--blue);
+      background: rgba(47, 107, 255, .08);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .intro h2 {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin: 14px 0 10px;
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1.06;
+      letter-spacing: 0;
+    }
+
+    .intro p {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .score-card {
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+    }
+
+    .score-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .score {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      font-size: 48px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .score span {
+      padding-bottom: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .meter {
+      height: 8px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e9eef6;
+    }
+
+    .meter i {
+      display: block;
+      width: var(--value, 0%);
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--red), var(--orange), var(--teal));
+    }
+
+    .score-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 13px;
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: 360px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #fbfcff);
+    }
+
+    .panel-head h3 {
+      margin: 0 0 5px;
+      font-size: 17px;
+    }
+
+    .panel-head p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 13px;
+    }
+
+    .tag {
+      flex: 0 0 auto;
+      min-height: 26px;
+      border-radius: 999px;
+      padding: 5px 10px;
+      color: #36506b;
+      background: #eef4fb;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .panel-body { padding: 18px; }
+
+    .form-grid {
+      display: grid;
+      gap: 13px;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      color: var(--ink);
+      background: #fff;
+      outline: none;
+      transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+
+    input, select {
+      min-height: 42px;
+      padding: 0 11px;
+    }
+
+    textarea {
+      min-height: 94px;
+      padding: 11px;
+      resize: vertical;
+      line-height: 1.65;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: rgba(47, 107, 255, .68);
+      box-shadow: 0 0 0 4px rgba(47, 107, 255, .10);
+      background: #f8fbff;
+    }
+
+    .input-hint {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .workspace {
+      display: grid;
+      gap: 16px;
+    }
+
+    .video-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .video-card {
+      display: grid;
+      grid-template-columns: minmax(220px, 1.4fr) 110px 110px 90px 90px 90px 90px 90px 78px;
+      gap: 8px;
+      align-items: end;
+      padding: 12px;
+      border: 1px solid #e7edf5;
+      border-radius: 8px;
+      background: var(--soft);
+    }
+
+    .video-card label {
+      gap: 5px;
+      font-size: 12px;
+    }
+
+    .video-card input,
+    .video-card select {
+      min-height: 36px;
+      padding: 0 9px;
+      font-size: 13px;
+    }
+
+    .video-card .remove-wrap {
+      display: grid;
+      align-items: end;
+    }
+
+    .edit-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .edit-bar p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .results {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 380px;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .diagnosis {
+      border-left: 4px solid var(--teal);
+      border-radius: 8px;
+      padding: 14px;
+      background: #effbf8;
+    }
+
+    .diagnosis.warning {
+      border-left-color: var(--orange);
+      background: #fff8eb;
+    }
+
+    .diagnosis h4 {
+      margin: 0 0 7px;
+      font-size: 16px;
+    }
+
+    .diagnosis p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .insight-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .mini {
+      border: 1px solid #e7edf5;
+      border-radius: 8px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .mini b {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+
+    .mini p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.58;
+      font-size: 13px;
+    }
+
+    .bars {
+      display: grid;
+      gap: 9px;
+      margin-top: 12px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 58px minmax(0, 1fr) 70px;
+      gap: 8px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .bar-track {
+      height: 9px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e9eef6;
+    }
+
+    .bar-track i {
+      display: block;
+      width: var(--value, 0%);
+      height: 100%;
+      border-radius: inherit;
+      background: var(--color, var(--blue));
+    }
+
+    .suggestions {
+      display: grid;
+      gap: 9px;
+    }
+
+    .suggestion {
+      display: grid;
+      grid-template-columns: 86px minmax(0, 1fr);
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed #d9e2ee;
+    }
+
+    .suggestion:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .suggestion span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .suggestion p {
+      margin: 0;
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .plan {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(136px, 1fr));
+      gap: 10px;
+      overflow-x: auto;
+    }
+
+    .day {
+      min-height: 126px;
+      border: 1px solid #e7edf5;
+      border-radius: 8px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .day b {
+      display: block;
+      margin-bottom: 7px;
+      color: var(--blue);
+    }
+
+    .day p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 13px;
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      max-width: min(380px, calc(100vw - 36px));
+      border: 1px solid rgba(22, 163, 74, .25);
+      border-radius: 8px;
+      padding: 12px 14px;
+      color: #14532d;
+      background: #ecfdf5;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+      font-size: 14px;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 1240px) {
+      .hero, .main, .results {
+        grid-template-columns: 1fr;
+      }
+
+      .video-card {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .shell {
+        width: min(100% - 20px, 1420px);
+        padding-top: 14px;
+      }
+
+      .topbar,
+      .top-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .video-card,
+      .insight-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .suggestion {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">CI</div>
+        <div>
+          <h1>CreatorInsight AI</h1>
+          <p>抖音创作者复盘增长助手｜输入作品数据，生成下一条增长动作</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="btn" id="loadSampleBtn" type="button">载入示例</button>
+        <button class="btn primary" id="analyzeBtn" type="button">生成复盘报告</button>
+      </div>
+    </header>
+
+    <section class="hero">
+      <article class="card intro">
+        <span class="badge">AI 产品运营作品 Demo</span>
+        <h2 id="headline">先填写账号和作品数据，再让 AI 做复盘。</h2>
+        <p id="summary">这个工具模拟创作者运营场景：根据账号定位、近 5 条视频表现和指标规则，判断内容问题，并生成下一条选题、标题、开头、互动和 7 天增长计划。</p>
+      </article>
+
+      <article class="card score-card">
+        <div class="score-row">
+          <div>
+            <div class="score"><strong id="healthScore">--</strong><span>/100</span></div>
+            <p>账号健康分</p>
+          </div>
+          <span class="tag" id="riskTag">待分析</span>
+        </div>
+        <div class="meter"><i id="healthMeter" style="--value:0%"></i></div>
+        <p id="healthNote">填写或修改下面的数据后，点击“生成复盘报告”。</p>
+      </article>
+    </section>
+
+    <section class="main">
+      <aside class="card">
+        <div class="panel-head">
+          <div>
+            <h3>1. 填写创作者画像</h3>
+            <p>用于让诊断更贴近账号阶段和内容目标。</p>
+          </div>
+          <span class="tag">可填写</span>
+        </div>
+        <div class="panel-body">
+          <div class="form-grid">
+            <label>账号定位 / 内容垂类
+              <input id="category" value="职场成长 / 求职干货">
+              <span class="input-hint">例：AI 工具教程、本地生活、美妆测评、知识科普</span>
+            </label>
+            <label>目标人群
+              <input id="audience" value="22-28 岁应届生和职场新人">
+            </label>
+            <label>创作者阶段
+              <select id="stage">
+                <option>新手期创作者</option>
+                <option selected>成长期创作者</option>
+                <option>稳定期创作者</option>
+              </select>
+            </label>
+            <label>当前目标
+              <select id="goal">
+                <option selected>提高完播率和收藏率</option>
+                <option>提高互动率</option>
+                <option>提高粉丝转化</option>
+                <option>提高选题点击率</option>
+              </select>
+            </label>
+            <label>补充说明
+              <textarea id="notes" placeholder="可以写你对账号的观察，比如：播放量波动大、评论少、收藏还不错、想做 AI 产品运营方向内容等。">希望把求职干货做得更有记忆点，同时提高完播率和收藏率。</textarea>
+            </label>
+          </div>
+        </div>
+      </aside>
+
+      <section class="workspace">
+        <article class="card">
+          <div class="panel-head">
+            <div>
+              <h3>2. 编辑近 5 条作品数据</h3>
+              <p>下面每一格都可以直接填写。改完后点“生成复盘报告”，结果会重新计算。</p>
+            </div>
+            <span class="tag">核心输入区</span>
+          </div>
+          <div class="panel-body">
+            <div class="edit-bar">
+              <p>建议至少保留 3 条作品。指标不用完全精准，作品集 Demo 用合理样例即可。</p>
+              <button class="btn small" id="addVideoBtn" type="button">新增一条作品</button>
+            </div>
+            <div class="video-list" id="videoList"></div>
+          </div>
+        </article>
+
+        <section class="results">
+          <div class="stack">
+            <article class="card">
+              <div class="panel-head">
+                <div>
+                  <h3>3. AI 复盘诊断</h3>
+                  <p>规则判断 + AI 文案化表达，模拟真实产品机制。</p>
+                </div>
+                <span class="tag" id="focusTag">待分析</span>
+              </div>
+              <div class="panel-body stack">
+                <div class="diagnosis" id="diagnosisBox">
+                  <h4 id="diagnosisTitle">等待生成报告</h4>
+                  <p id="diagnosisText">填写账号和作品数据后，点击页面右上角“生成复盘报告”。</p>
+                </div>
+                <div class="insight-grid">
+                  <div class="mini">
+                    <b>表现最佳作品</b>
+                    <p id="bestVideo">--</p>
+                  </div>
+                  <div class="mini">
+                    <b>优先优化作品</b>
+                    <p id="weakVideo">--</p>
+                  </div>
+                </div>
+                <div class="bars" id="metricBars"></div>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="panel-head">
+                <div>
+                  <h3>5. 7 天增长计划</h3>
+                  <p>把复盘结论转成可执行任务。</p>
+                </div>
+                <span class="tag">行动闭环</span>
+              </div>
+              <div class="panel-body">
+                <div class="plan" id="growthPlan"></div>
+              </div>
+            </article>
+          </div>
+
+          <aside class="card">
+            <div class="panel-head">
+              <div>
+                <h3>4. 下一条内容建议</h3>
+                <p>直接服务下一次发布。</p>
+              </div>
+              <span class="tag">可执行</span>
+            </div>
+            <div class="panel-body">
+              <div class="suggestions" id="suggestions"></div>
+            </div>
+          </aside>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <div class="toast" id="toast">复盘报告已生成</div>
+
+  <script>
+    const sampleVideos = [
+      { title: "应届生面试最容易踩的 3 个坑", type: "案例", views: 18600, completion: 31, likes: 3.9, comments: 0.7, saves: 1.8, shares: 0.4 },
+      { title: "为什么你投 100 份简历都没回复", type: "观点", views: 32400, completion: 23, likes: 2.8, comments: 1.3, saves: 1.1, shares: 0.5 },
+      { title: "AI 产品运营到底每天在做什么", type: "干货", views: 12800, completion: 38, likes: 4.7, comments: 0.9, saves: 3.6, shares: 0.8 },
+      { title: "面试官问职业规划，别再这样回答", type: "教程", views: 22100, completion: 35, likes: 4.2, comments: 0.6, saves: 2.4, shares: 0.5 },
+      { title: "普通人怎么做出第一份作品集", type: "清单", views: 9400, completion: 29, likes: 3.3, comments: 0.4, saves: 3.9, shares: 0.6 }
+    ];
+
+    const $ = (selector) => document.querySelector(selector);
+    let videos = structuredClone(sampleVideos);
+
+    function renderVideos() {
+      $("#videoList").innerHTML = videos.map((video, index) => `
+        <div class="video-card">
+          <label>视频标题
+            <input value="${escapeAttr(video.title)}" data-index="${index}" data-field="title">
+          </label>
+          <label>内容类型
+            <select data-index="${index}" data-field="type">
+              ${["案例", "观点", "干货", "教程", "清单", "测评", "剧情"].map(type => `<option ${type === video.type ? "selected" : ""}>${type}</option>`).join("")}
+            </select>
+          </label>
+          <label>播放量
+            <input type="number" min="0" value="${video.views}" data-index="${index}" data-field="views">
+          </label>
+          <label>完播%
+            <input type="number" min="0" max="100" step="0.1" value="${video.completion}" data-index="${index}" data-field="completion">
+          </label>
+          <label>点赞%
+            <input type="number" min="0" step="0.1" value="${video.likes}" data-index="${index}" data-field="likes">
+          </label>
+          <label>评论%
+            <input type="number" min="0" step="0.1" value="${video.comments}" data-index="${index}" data-field="comments">
+          </label>
+          <label>收藏%
+            <input type="number" min="0" step="0.1" value="${video.saves}" data-index="${index}" data-field="saves">
+          </label>
+          <label>转发%
+            <input type="number" min="0" step="0.1" value="${video.shares}" data-index="${index}" data-field="shares">
+          </label>
+          <div class="remove-wrap">
+            <button class="btn small danger" type="button" data-remove="${index}">删除</button>
+          </div>
+        </div>
+      `).join("");
+
+      document.querySelectorAll("[data-index]").forEach((input) => {
+        input.addEventListener("input", (event) => {
+          const index = Number(event.target.dataset.index);
+          const field = event.target.dataset.field;
+          videos[index][field] = field === "title" || field === "type" ? event.target.value : Number(event.target.value || 0);
+        });
+      });
+
+      document.querySelectorAll("[data-remove]").forEach((button) => {
+        button.addEventListener("click", (event) => {
+          if (videos.length <= 3) {
+            showToast("至少保留 3 条作品，诊断会更可信。");
+            return;
+          }
+          videos.splice(Number(event.target.dataset.remove), 1);
+          renderVideos();
+          analyze();
+        });
+      });
+    }
+
+    function escapeAttr(value) {
+      return String(value).replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+    }
+
+    function avg(field) {
+      return videos.reduce((sum, video) => sum + Number(video[field] || 0), 0) / Math.max(videos.length, 1);
+    }
+
+    function norm(value, target) {
+      return Math.max(0, Math.min(1, value / target));
+    }
+
+    function stabilityScore() {
+      const averageViews = avg("views") || 1;
+      const diff = videos.reduce((sum, video) => sum + Math.abs(video.views - averageViews), 0) / videos.length;
+      return Math.round(Math.max(28, 100 - norm(diff, averageViews) * 82));
+    }
+
+    async function analyze() {
+      setAnalyzeLoading(true);
+      const averageViews = avg("views");
+      const averageCompletion = avg("completion");
+      const averageLikes = avg("likes");
+      const averageComments = avg("comments");
+      const averageSaves = avg("saves");
+      const averageShares = avg("shares");
+      const stable = stabilityScore();
+
+      const health = Math.round(
+        norm(averageViews, 26000) * 20 +
+        norm(averageCompletion, 42) * 25 +
+        norm(averageLikes + averageComments * 2 + averageShares * 1.5, 8) * 25 +
+        norm(averageSaves, 4) * 20 +
+        stable / 100 * 10
+      );
+
+      const scored = videos.map(video => ({
+        ...video,
+        score: video.views * .0008 + video.completion * 1.4 + video.likes * 5 + video.comments * 8 + video.saves * 6 + video.shares * 5
+      }));
+      const best = [...scored].sort((a, b) => b.score - a.score)[0];
+      const weak = [...scored].sort((a, b) => a.score - b.score)[0];
+
+      const metrics = [
+        { name: "播放", value: norm(averageViews, 26000), label: `${Math.round(averageViews).toLocaleString()} 均播`, color: "#2f6bff" },
+        { name: "完播", value: norm(averageCompletion, 42), label: `${averageCompletion.toFixed(1)}%`, color: "#12b9a6" },
+        { name: "点赞", value: norm(averageLikes, 5), label: `${averageLikes.toFixed(1)}%`, color: "#ef4444" },
+        { name: "评论", value: norm(averageComments, 1.4), label: `${averageComments.toFixed(1)}%`, color: "#7c3aed" },
+        { name: "收藏", value: norm(averageSaves, 4), label: `${averageSaves.toFixed(1)}%`, color: "#f59e0b" }
+      ];
+
+      const weakest = [...metrics].sort((a, b) => a.value - b.value)[0];
+      const strongest = [...metrics].sort((a, b) => b.value - a.value)[0];
+
+      let focus = "内容承接";
+      let title = "内容具备增长基础，下一步要提升承接效率";
+      let text = "你的内容已经有一定选题吸引力，但不同视频之间表现波动较大。建议把高收藏内容的结构沉淀成模板，同时加强开头 3 秒的信息密度。";
+      let risk = "低风险";
+
+      if (averageViews > 24000 && averageCompletion < 28) {
+        focus = "开头承接";
+        title = "选题能吸引点击，但内容承接偏弱";
+        text = "播放表现较好，说明标题或选题有进入流量池的能力；但完播偏低，用户进来后没有被快速留住。下一条优先优化前 3 秒钩子和内容节奏。";
+      } else if (averageCompletion > 35 && averageLikes < 3.5) {
+        focus = "情绪共鸣";
+        title = "用户愿意看完，但情绪共鸣不足";
+        text = "完播率表现不错，说明结构相对清楚；点赞偏弱意味着观点态度、故事反差或情绪价值还不够强。可以在结尾强化立场和共鸣表达。";
+      } else if (averageSaves > 3 && averageComments < .7) {
+        focus = "互动设计";
+        title = "干货价值强，但互动设计不足";
+        text = "收藏率较高，说明内容对目标人群有实用价值；评论率偏低，说明缺少明确讨论入口。建议用选择题、真实案例或争议观点引导评论。";
+      } else if (averageViews < 12000 && averageLikes + averageComments + averageSaves > 7) {
+        focus = "选题包装";
+        title = "内容质量不错，但分发入口偏弱";
+        text = "互动和收藏表现不差，但播放规模偏小。问题更可能出在标题、封面表达或热点关联上，需要提升用户第一眼点击理由。";
+      } else if (health < 55) {
+        focus = "定位聚焦";
+        title = "账号定位和内容结构需要重新聚焦";
+        text = "多项指标处于低位，说明不是单点优化问题。建议先缩小目标人群，围绕一个高频痛点连续测试 3-5 条内容。";
+        risk = "需关注";
+      }
+
+      const ruleReview = { health, risk, focus, title, text, best, weak, metrics, weakest, strongest };
+      renderRuleReview(ruleReview);
+
+      try {
+        const aiReview = await requestAiReview({
+          profile: getProfile(),
+          videos,
+          metrics: {
+            averageViews: Math.round(averageViews),
+            averageCompletion: Number(averageCompletion.toFixed(1)),
+            averageLikes: Number(averageLikes.toFixed(1)),
+            averageComments: Number(averageComments.toFixed(1)),
+            averageSaves: Number(averageSaves.toFixed(1)),
+            averageShares: Number(averageShares.toFixed(1)),
+            stability: stable,
+            health
+          },
+          ruleReview: {
+            focus,
+            title,
+            text,
+            bestVideo: best.title,
+            weakVideo: weak.title,
+            weakestMetric: weakest.name,
+            strongestMetric: strongest.name
+          }
+        });
+        renderAiReview(aiReview, ruleReview);
+        showToast("AI 复盘报告已生成。");
+      } catch (error) {
+        showToast("后端 AI 暂不可用，已展示规则诊断结果。");
+      } finally {
+        setAnalyzeLoading(false);
+      }
+    }
+
+    function getProfile() {
+      return {
+        category: $("#category").value.trim(),
+        audience: $("#audience").value.trim(),
+        stage: $("#stage").value,
+        goal: $("#goal").value,
+        notes: $("#notes").value.trim()
+      };
+    }
+
+    function renderRuleReview(review) {
+      $("#healthScore").textContent = review.health;
+      $("#healthMeter").style.setProperty("--value", `${review.health}%`);
+      $("#healthNote").textContent = review.health >= 75 ? "表现较稳，可以进入结构复用和选题放大。" : review.health >= 60 ? "具备增长基础，需要明确一个优先优化点。" : "建议先聚焦定位、选题和内容结构。";
+      $("#riskTag").textContent = review.risk;
+      $("#focusTag").textContent = review.focus;
+      $("#headline").textContent = review.title;
+      $("#summary").textContent = review.text;
+      $("#diagnosisTitle").textContent = review.title;
+      $("#diagnosisText").textContent = review.text;
+      $("#diagnosisBox").classList.toggle("warning", review.health < 60);
+      $("#bestVideo").textContent = `${review.best.title}：综合表现最好，建议复用它的选题角度、信息密度和内容结构。`;
+      $("#weakVideo").textContent = `${review.weak.title}：综合表现偏弱，优先检查标题吸引力、开头承接和互动设计。`;
+      $("#metricBars").innerHTML = review.metrics.map(metric => `
+        <div class="bar-row">
+          <span>${metric.name}</span>
+          <div class="bar-track"><i style="--value:${Math.round(metric.value * 100)}%; --color:${metric.color}"></i></div>
+          <strong>${metric.label}</strong>
+        </div>
+      `).join("");
+      renderSuggestions({ focus: review.focus, weakest: review.weakest, strongest: review.strongest });
+      renderPlan(review.focus);
+    }
+
+    async function requestAiReview(payload) {
+      const response = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.review) {
+        throw new Error(data.error || "AI review failed");
+      }
+      return data.review;
+    }
+
+    function renderAiReview(review, fallback) {
+      const title = review.diagnosisTitle || fallback.title;
+      const text = review.diagnosisText || fallback.text;
+      const focus = review.focus || fallback.focus;
+      $("#headline").textContent = title;
+      $("#summary").textContent = text;
+      $("#diagnosisTitle").textContent = title;
+      $("#diagnosisText").textContent = text;
+      $("#focusTag").textContent = focus;
+      if (review.bestVideo) $("#bestVideo").textContent = review.bestVideo;
+      if (review.weakVideo) $("#weakVideo").textContent = review.weakVideo;
+      if (Array.isArray(review.suggestions) && review.suggestions.length) {
+        renderSuggestionItems(review.suggestions);
+      }
+      if (Array.isArray(review.plan) && review.plan.length) {
+        renderPlanItems(review.plan);
+      }
+    }
+
+    function renderSuggestions({ focus, weakest, strongest }) {
+      const category = $("#category").value.trim() || "当前垂类";
+      const audience = $("#audience").value.trim() || "目标用户";
+      const notes = $("#notes").value.trim();
+      const items = [
+        ["推荐选题", `围绕「${audience}最容易忽视的一个${category.includes("职场") ? "求职误区" : "高频痛点"}」做一条案例拆解，用真实场景降低理解成本。`],
+        ["标题方向", "用“结果 + 反差 + 人群”的结构，例如：不是你不努力，是这 3 个细节让面试官直接跳过你。"],
+        ["开头 3 秒", "直接抛出痛点：“如果你投了很多简历没回复，先别急着改模板，问题可能出在第一句话。”"],
+        ["内容结构", `先给结论，再讲 2 个典型错误，最后给一个可复制模板。当前强项是${strongest.name}，短板是${weakest.name}。`],
+        ["互动引导", "结尾设置低门槛评论：“你现在卡在简历、面试还是作品集？我按评论区最高频问题出下一条。”"],
+        ["补充建议", notes ? `结合你的补充说明：${notes}` : `下一条内容只盯一个目标：优先改善${focus}，不要同时改太多变量。`]
+      ];
+
+      renderSuggestionItems(items);
+    }
+
+    function renderSuggestionItems(items) {
+      $("#suggestions").innerHTML = items.map((item) => {
+        const label = Array.isArray(item) ? item[0] : item.label;
+        const text = Array.isArray(item) ? item[1] : item.text;
+        return `
+        <div class="suggestion">
+          <span>${escapeHtml(label || "建议")}</span>
+          <p>${escapeHtml(text || "")}</p>
+        </div>
+      `;
+      }).join("");
+    }
+
+    function renderPlan(focus) {
+      const plan = [
+        ["第 1 天", "复盘表现最好的一条视频，拆出标题、开头、结构和结尾互动模板。"],
+        ["第 2 天", `围绕${focus}生成 3 个同主题选题，保留一个主选题和一个备选题。`],
+        ["第 3 天", "写两版标题，一版强调痛点，一版强调结果，选择更适合目标人群的一版。"],
+        ["第 4 天", "重点打磨前 3 秒开头，删除背景铺垫，把核心矛盾前置。"],
+        ["第 5 天", "发布一条带明确互动问题的视频，评论区置顶补充模板或清单。"],
+        ["第 6 天", "观察播放、完播、评论、收藏四个指标，记录相比近 5 条均值的变化。"],
+        ["第 7 天", "形成下一轮复盘结论：保留有效结构，替换无效表达，继续做 3 条小步测试。"]
+      ];
+      renderPlanItems(plan.map(([day, text]) => ({ day, text })));
+    }
+
+    function renderPlanItems(plan) {
+      $("#growthPlan").innerHTML = plan.map((item, index) => `
+        <article class="day">
+          <b>${escapeHtml(item.day || `第 ${index + 1} 天`)}</b>
+          <p>${escapeHtml(item.text || "")}</p>
+        </article>
+      `).join("");
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function setAnalyzeLoading(isLoading) {
+      const button = $("#analyzeBtn");
+      button.disabled = isLoading;
+      button.textContent = isLoading ? "AI 正在复盘..." : "生成复盘报告";
+    }
+
+    function showToast(message) {
+      const toast = $("#toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 2200);
+    }
+
+    $("#addVideoBtn").addEventListener("click", () => {
+      videos.push({ title: "新作品标题", type: "干货", views: 8000, completion: 28, likes: 3, comments: .5, saves: 1.5, shares: .3 });
+      renderVideos();
+      showToast("已新增一条作品，可以直接编辑。");
+    });
+
+    $("#loadSampleBtn").addEventListener("click", () => {
+      videos = structuredClone(sampleVideos);
+      $("#category").value = "职场成长 / 求职干货";
+      $("#audience").value = "22-28 岁应届生和职场新人";
+      $("#stage").value = "成长期创作者";
+      $("#goal").value = "提高完播率和收藏率";
+      $("#notes").value = "希望把求职干货做得更有记忆点，同时提高完播率和收藏率。";
+      renderVideos();
+      analyze();
+    });
+
+    $("#analyzeBtn").addEventListener("click", analyze);
+
+    renderVideos();
+    renderPlan("内容承接");
+    renderSuggestions({
+      focus: "内容承接",
+      weakest: { name: "待分析" },
+      strongest: { name: "待分析" }
+    });
+  </script>
+</body>
+</html>
