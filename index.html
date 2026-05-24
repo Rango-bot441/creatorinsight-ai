@@ -762,11 +762,11 @@
 
   <script>
     const sampleVideos = [
-      { title: "应届生面试最容易踩的 3 个坑", type: "案例", views: 18600, completion: 31, likes: 3.9, comments: 0.7, saves: 1.8, shares: 0.4 },
-      { title: "为什么你投 100 份简历都没回复", type: "观点", views: 32400, completion: 23, likes: 2.8, comments: 1.3, saves: 1.1, shares: 0.5 },
-      { title: "AI 产品运营到底每天在做什么", type: "干货", views: 12800, completion: 38, likes: 4.7, comments: 0.9, saves: 3.6, shares: 0.8 },
-      { title: "面试官问职业规划，别再这样回答", type: "教程", views: 22100, completion: 35, likes: 4.2, comments: 0.6, saves: 2.4, shares: 0.5 },
-      { title: "普通人怎么做出第一份作品集", type: "清单", views: 9400, completion: 29, likes: 3.3, comments: 0.4, saves: 3.9, shares: 0.6 }
+      { title: "新手创作者最容易忽略的 3 个开头细节", type: "案例", views: 18600, completion: 31, likes: 3.9, comments: 0.7, saves: 1.8, shares: 0.4 },
+      { title: "为什么你的干货视频播放高但没人收藏", type: "观点", views: 32400, completion: 23, likes: 2.8, comments: 1.3, saves: 1.1, shares: 0.5 },
+      { title: "一条短视频从选题到复盘怎么做", type: "干货", views: 12800, completion: 38, likes: 4.7, comments: 0.9, saves: 3.6, shares: 0.8 },
+      { title: "内容发出去后，先看哪 4 个指标", type: "教程", views: 22100, completion: 35, likes: 4.2, comments: 0.6, saves: 2.4, shares: 0.5 },
+      { title: "普通人怎么搭建自己的选题库", type: "清单", views: 9400, completion: 29, likes: 3.3, comments: 0.4, saves: 3.9, shares: 0.6 }
     ];
 
     const $ = (selector) => document.querySelector(selector);
@@ -1017,11 +1017,11 @@
       const audience = $("#audience").value.trim() || "目标用户";
       const notes = $("#notes").value.trim();
       const items = [
-        ["推荐选题", `围绕「${audience}最容易忽视的一个${category.includes("职场") ? "求职误区" : "高频痛点"}」做一条案例拆解，用真实场景降低理解成本。`],
-        ["标题方向", "用“结果 + 反差 + 人群”的结构，例如：不是你不努力，是这 3 个细节让面试官直接跳过你。"],
-        ["开头 3 秒", "直接抛出痛点：“如果你投了很多简历没回复，先别急着改模板，问题可能出在第一句话。”"],
+        ["推荐选题", `围绕「${audience}最容易忽视的一个高频痛点」做一条案例拆解，用真实场景降低理解成本。`],
+        ["标题方向", "用“结果 + 反差 + 人群”的结构，例如：不是内容不够好，是这 3 个细节让用户直接划走。"],
+        ["开头 3 秒", "直接抛出痛点：“如果你的内容播放不错但转化很弱，先别急着换方向，问题可能出在开头承接。”"],
         ["内容结构", `先给结论，再讲 2 个典型错误，最后给一个可复制模板。当前强项是${strongest.name}，短板是${weakest.name}。`],
-        ["互动引导", "结尾设置低门槛评论：“你现在卡在简历、面试还是作品集？我按评论区最高频问题出下一条。”"],
+        ["互动引导", "结尾设置低门槛评论：“你现在最卡的是选题、开头还是复盘？我按评论区最高频问题出下一条。”"],
         ["补充建议", notes ? `结合你的补充说明：${notes}` : `下一条内容只盯一个目标：优先改善${focus}，不要同时改太多变量。`]
       ];
 

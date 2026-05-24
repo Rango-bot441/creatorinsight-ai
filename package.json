@@ -1,0 +1,22 @@
+{
+  "name": "creatorinsight-ai",
+  "version": "1.0.0",
+  "private": false,
+  "description": "AI-powered review workspace for short-video creator growth.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "PORT=4184 node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "ai",
+    "creator-growth",
+    "short-video",
+    "copilot",
+    "content-operations"
+  ],
+  "license": "MIT"
+}
