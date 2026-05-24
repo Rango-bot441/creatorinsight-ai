@@ -594,6 +594,12 @@
       transform: translateY(0);
     }
 
+    .pending {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
     @media (max-width: 1240px) {
       .hero, .main, .results {
         grid-template-columns: 1fr;
@@ -639,7 +645,7 @@
       </div>
       <div class="top-actions">
         <button class="btn" id="loadSampleBtn" type="button">载入示例</button>
-        <button class="btn primary" id="analyzeBtn" type="button">生成复盘报告</button>
+        <button class="btn primary" id="analyzeBtn" type="button">生成分析</button>
       </div>
     </header>
 
@@ -659,7 +665,7 @@
           <span class="tag" id="riskTag">待分析</span>
         </div>
         <div class="meter"><i id="healthMeter" style="--value:0%"></i></div>
-        <p id="healthNote">填写或修改下面的数据后，点击“生成复盘报告”。</p>
+        <p id="healthNote">填写或修改下面的数据后，点击“生成分析”。分析前不会预设分数。</p>
         <div class="score-breakdown" id="scoreBreakdown"></div>
       </article>
     </section>
@@ -709,7 +715,7 @@
           <div class="panel-head">
             <div>
               <h3>2. 编辑近 5 条作品数据</h3>
-              <p>下面每一格都可以直接填写。改完后点“生成复盘报告”，结果会重新计算。</p>
+              <p>下面每一格都可以直接填写。改完后点“生成分析”，系统会先生成中，再展示报告。</p>
             </div>
             <span class="tag">核心输入区</span>
           </div>
@@ -735,7 +741,7 @@
               <div class="panel-body stack">
                 <div class="diagnosis" id="diagnosisBox">
                   <h4 id="diagnosisTitle">等待生成报告</h4>
-                  <p id="diagnosisText">填写账号和作品数据后，点击页面右上角“生成复盘报告”。</p>
+                  <p id="diagnosisText">填写账号和作品数据后，点击页面右上角“生成分析”。</p>
                 </div>
                 <div class="insight-grid">
                   <div class="mini">
@@ -836,7 +842,7 @@
           const index = Number(event.target.dataset.index);
           const field = event.target.dataset.field;
           videos[index][field] = field === "title" || field === "type" ? event.target.value : Number(event.target.value || 0);
-          renderScorePreview();
+          markAnalysisPending();
         });
       });
 
@@ -848,7 +854,7 @@
           }
           videos.splice(Number(event.target.dataset.remove), 1);
           renderVideos();
-          analyze();
+          markAnalysisPending();
         });
       });
     }
@@ -969,6 +975,8 @@
     async function analyze() {
       setAnalyzeLoading(true);
       const ruleReview = buildRuleReview();
+      renderGeneratingState();
+      await wait(2300);
       renderRuleReview(ruleReview);
 
       try {
@@ -1039,13 +1047,38 @@
       renderPlan(review.focus);
     }
 
-    function renderScorePreview() {
-      const review = buildRuleReview();
-      $("#healthScore").textContent = review.health;
-      $("#healthMeter").style.setProperty("--value", `${review.health}%`);
-      $("#healthNote").textContent = "健康分已根据当前数据实时更新，点击生成报告可刷新 AI 诊断。";
-      $("#riskTag").textContent = "实时预览";
-      renderScoreBreakdown(review.scoreParts);
+    function renderGeneratingState() {
+      $("#healthScore").textContent = "...";
+      $("#healthMeter").style.setProperty("--value", "18%");
+      $("#healthNote").textContent = "正在读取作品数据、计算指标并生成复盘建议...";
+      $("#riskTag").textContent = "生成中";
+      $("#headline").textContent = "正在生成创作者复盘报告...";
+      $("#summary").textContent = "系统正在结合账号画像、作品指标和内容表现，生成本次诊断结果。";
+      $("#diagnosisTitle").textContent = "AI 正在分析";
+      $("#diagnosisText").textContent = "请稍等 2-3 秒，报告生成后会展示健康分、问题归因、下一条建议和 7 天计划。";
+      $("#bestVideo").textContent = "--";
+      $("#weakVideo").textContent = "--";
+      $("#metricBars").innerHTML = `<p class="pending">正在计算播放、完播、互动、收藏和稳定性指标...</p>`;
+      $("#suggestions").innerHTML = `<p class="pending">正在生成下一条内容建议...</p>`;
+      $("#growthPlan").innerHTML = `<p class="pending">正在生成 7 天增长计划...</p>`;
+      renderScoreBreakdown({});
+    }
+
+    function markAnalysisPending() {
+      $("#healthScore").textContent = "--";
+      $("#healthMeter").style.setProperty("--value", "0%");
+      $("#healthNote").textContent = "数据已更新，点击“生成分析”后会重新计算健康分。";
+      $("#riskTag").textContent = "待分析";
+      $("#headline").textContent = "数据已更新，等待生成分析。";
+      $("#summary").textContent = "点击“生成分析”后，系统会根据当前填写内容生成新的复盘报告。";
+      $("#diagnosisTitle").textContent = "等待生成报告";
+      $("#diagnosisText").textContent = "当前数据已变更，点击页面右上角“生成分析”查看结果。";
+      $("#bestVideo").textContent = "--";
+      $("#weakVideo").textContent = "--";
+      $("#metricBars").innerHTML = "";
+      $("#suggestions").innerHTML = `<p class="pending">生成分析后展示下一条内容建议。</p>`;
+      $("#growthPlan").innerHTML = `<p class="pending">生成分析后展示 7 天增长计划。</p>`;
+      renderScoreBreakdown({});
     }
 
     function renderScoreBreakdown(scoreParts = {}) {
@@ -1159,7 +1192,11 @@
     function setAnalyzeLoading(isLoading) {
       const button = $("#analyzeBtn");
       button.disabled = isLoading;
-      button.textContent = isLoading ? "AI 正在复盘..." : "生成复盘报告";
+      button.textContent = isLoading ? "AI 正在生成..." : "生成分析";
+    }
+
+    function wait(ms) {
+      return new Promise(resolve => window.setTimeout(resolve, ms));
     }
 
     function showToast(message) {
@@ -1184,19 +1221,13 @@
       $("#goal").value = "提高完播率和收藏率";
       $("#notes").value = "希望把求职干货做得更有记忆点，同时提高完播率和收藏率。";
       renderVideos();
-      analyze();
+      markAnalysisPending();
     });
 
     $("#analyzeBtn").addEventListener("click", analyze);
 
     renderVideos();
-    renderScorePreview();
-    renderPlan("内容承接");
-    renderSuggestions({
-      focus: "内容承接",
-      weakest: { name: "待分析" },
-      strongest: { name: "待分析" }
-    });
+    markAnalysisPending();
   </script>
 </body>
 </html>
