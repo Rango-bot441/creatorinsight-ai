@@ -254,6 +254,29 @@
       font-size: 13px;
     }
 
+    .score-breakdown {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    .score-chip {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      border: 1px solid #e7edf5;
+      border-radius: 8px;
+      padding: 8px 9px;
+      color: var(--muted);
+      background: var(--soft);
+      font-size: 12px;
+    }
+
+    .score-chip strong {
+      color: var(--ink);
+    }
+
     .main {
       display: grid;
       grid-template-columns: 360px minmax(0, 1fr);
@@ -637,6 +660,7 @@
         </div>
         <div class="meter"><i id="healthMeter" style="--value:0%"></i></div>
         <p id="healthNote">填写或修改下面的数据后，点击“生成复盘报告”。</p>
+        <div class="score-breakdown" id="scoreBreakdown"></div>
       </article>
     </section>
 
@@ -812,6 +836,7 @@
           const index = Number(event.target.dataset.index);
           const field = event.target.dataset.field;
           videos[index][field] = field === "title" || field === "type" ? event.target.value : Number(event.target.value || 0);
+          renderScorePreview();
         });
       });
 
@@ -846,8 +871,7 @@
       return Math.round(Math.max(28, 100 - norm(diff, averageViews) * 82));
     }
 
-    async function analyze() {
-      setAnalyzeLoading(true);
+    function buildRuleReview() {
       const averageViews = avg("views");
       const averageCompletion = avg("completion");
       const averageLikes = avg("likes");
@@ -856,12 +880,20 @@
       const averageShares = avg("shares");
       const stable = stabilityScore();
 
+      const scoreParts = {
+        play: norm(averageViews, 26000) * 20,
+        completion: norm(averageCompletion, 42) * 25,
+        interaction: norm(averageLikes + averageComments * 2 + averageShares * 1.5, 8) * 25,
+        save: norm(averageSaves, 4) * 20,
+        stability: stable / 100 * 10
+      };
+
       const health = Math.round(
-        norm(averageViews, 26000) * 20 +
-        norm(averageCompletion, 42) * 25 +
-        norm(averageLikes + averageComments * 2 + averageShares * 1.5, 8) * 25 +
-        norm(averageSaves, 4) * 20 +
-        stable / 100 * 10
+        scoreParts.play +
+        scoreParts.completion +
+        scoreParts.interaction +
+        scoreParts.save +
+        scoreParts.stability
       );
 
       const scored = videos.map(video => ({
@@ -910,7 +942,33 @@
         risk = "需关注";
       }
 
-      const ruleReview = { health, risk, focus, title, text, best, weak, metrics, weakest, strongest };
+      return {
+        health,
+        risk,
+        focus,
+        title,
+        text,
+        best,
+        weak,
+        metrics,
+        weakest,
+        strongest,
+        scoreParts,
+        averages: {
+          averageViews,
+          averageCompletion,
+          averageLikes,
+          averageComments,
+          averageSaves,
+          averageShares,
+          stable
+        }
+      };
+    }
+
+    async function analyze() {
+      setAnalyzeLoading(true);
+      const ruleReview = buildRuleReview();
       renderRuleReview(ruleReview);
 
       try {
@@ -918,23 +976,23 @@
           profile: getProfile(),
           videos,
           metrics: {
-            averageViews: Math.round(averageViews),
-            averageCompletion: Number(averageCompletion.toFixed(1)),
-            averageLikes: Number(averageLikes.toFixed(1)),
-            averageComments: Number(averageComments.toFixed(1)),
-            averageSaves: Number(averageSaves.toFixed(1)),
-            averageShares: Number(averageShares.toFixed(1)),
-            stability: stable,
-            health
+            averageViews: Math.round(ruleReview.averages.averageViews),
+            averageCompletion: Number(ruleReview.averages.averageCompletion.toFixed(1)),
+            averageLikes: Number(ruleReview.averages.averageLikes.toFixed(1)),
+            averageComments: Number(ruleReview.averages.averageComments.toFixed(1)),
+            averageSaves: Number(ruleReview.averages.averageSaves.toFixed(1)),
+            averageShares: Number(ruleReview.averages.averageShares.toFixed(1)),
+            stability: ruleReview.averages.stable,
+            health: ruleReview.health
           },
           ruleReview: {
-            focus,
-            title,
-            text,
-            bestVideo: best.title,
-            weakVideo: weak.title,
-            weakestMetric: weakest.name,
-            strongestMetric: strongest.name
+            focus: ruleReview.focus,
+            title: ruleReview.title,
+            text: ruleReview.text,
+            bestVideo: ruleReview.best.title,
+            weakVideo: ruleReview.weak.title,
+            weakestMetric: ruleReview.weakest.name,
+            strongestMetric: ruleReview.strongest.name
           }
         });
         renderAiReview(aiReview, ruleReview);
@@ -960,6 +1018,7 @@
       $("#healthScore").textContent = review.health;
       $("#healthMeter").style.setProperty("--value", `${review.health}%`);
       $("#healthNote").textContent = review.health >= 75 ? "表现较稳，可以进入结构复用和选题放大。" : review.health >= 60 ? "具备增长基础，需要明确一个优先优化点。" : "建议先聚焦定位、选题和内容结构。";
+      renderScoreBreakdown(review.scoreParts);
       $("#riskTag").textContent = review.risk;
       $("#focusTag").textContent = review.focus;
       $("#headline").textContent = review.title;
@@ -978,6 +1037,31 @@
       `).join("");
       renderSuggestions({ focus: review.focus, weakest: review.weakest, strongest: review.strongest });
       renderPlan(review.focus);
+    }
+
+    function renderScorePreview() {
+      const review = buildRuleReview();
+      $("#healthScore").textContent = review.health;
+      $("#healthMeter").style.setProperty("--value", `${review.health}%`);
+      $("#healthNote").textContent = "健康分已根据当前数据实时更新，点击生成报告可刷新 AI 诊断。";
+      $("#riskTag").textContent = "实时预览";
+      renderScoreBreakdown(review.scoreParts);
+    }
+
+    function renderScoreBreakdown(scoreParts = {}) {
+      const items = [
+        ["播放", scoreParts.play, 20],
+        ["完播", scoreParts.completion, 25],
+        ["互动", scoreParts.interaction, 25],
+        ["收藏", scoreParts.save, 20],
+        ["稳定", scoreParts.stability, 10]
+      ];
+      $("#scoreBreakdown").innerHTML = items.map(([label, value, total]) => `
+        <div class="score-chip">
+          <span>${label}</span>
+          <strong>${Math.round(value || 0)}/${total}</strong>
+        </div>
+      `).join("");
     }
 
     async function requestAiReview(payload) {
@@ -1106,6 +1190,7 @@
     $("#analyzeBtn").addEventListener("click", analyze);
 
     renderVideos();
+    renderScorePreview();
     renderPlan("内容承接");
     renderSuggestions({
       focus: "内容承接",
